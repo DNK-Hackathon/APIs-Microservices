@@ -1,41 +1,34 @@
-from datetime import datetime, date
-from pyinvoice.models import InvoiceInfo, ServiceProviderInfo, ClientInfo, Item, Transaction
-from pyinvoice.templates import SimpleInvoice
+import jinja2
+import pdfkit
+#import pandas as pd
 
-doc = SimpleInvoice('invoice.pdf')
 
-# Paid stamp, optional
-doc.is_paid = True
 
-doc.invoice_info = InvoiceInfo(1023, datetime.now(), datetime.now())  # Invoice info, optional
+INPUT_NAME = "kush"
+INPUT_PHONENUMBER = "9305407007"
+INPUT_COUNTRY = "INDIA"
+INPUT_ADDRESS = "ajjabdjbjds"
+INPUT_RNAME = "ABHI"
+INPUT_RPHONENUMBER ="86757789968"
+INPUT_RCOUNTRY = "SPAIN"
+INPUT_RADDRESS = "hshdksfk"
+INP_PT = "A"
+INP_AN = "PEN"
+INP_INS = "YES"
+INP_VALUE = "2000"
+INP_WT = "400"
+INP_QUANTITY = "2"
 
-# Service Provider Info, optional
-doc.service_provider_info = ServiceProviderInfo(
-    name='PyInvoice',
-    street='My Street',
-    city='My City',
-    state='My State',
-    country='My Country',
-    post_code='222222',
-    vat_tax_number='Vat/Tax number'
-)
+context = {'INPUT_NAME': INPUT_NAME, 'INPUT_PHONENUMBER': INPUT_PHONENUMBER, 'INPUT_COUNTRY': INPUT_COUNTRY,'INPUT_ADDRESS': INPUT_ADDRESS,'INPUT_RNAME':INPUT_RNAME,'INPUT_RPHONENUMBER':INPUT_RPHONENUMBER,'INPUT_RCOUNTRY':INPUT_RCOUNTRY,'INPUT_RADDRESS':INPUT_RADDRESS,'INP_PT':INP_PT,'INP_AN':INP_AN,'INP_INS':INP_INS,'INP_VALUE':INP_VALUE,'INP_WT':INP_WT,'INP_QUANTITY':INP_QUANTITY}
 
-# Client info, optional
-doc.client_info = ClientInfo(email='client@example.com')
 
-# Add Item
-doc.add_item(Item('Item', 'Item desc', 1, '1.1'))
-doc.add_item(Item('Item', 'Item desc', 2, '2.2'))
-doc.add_item(Item('Item', 'Item desc', 3, '3.3'))
+template_loader = jinja2.FileSystemLoader('./')
+template_env = jinja2.Environment(loader=template_loader)
 
-# Tax rate, optional
-doc.set_item_tax_rate(20)  # 20%
+template = template_env.get_template("template.html")
+output_text = template.render(context)
+print(output_text)
+#config = pdfkit.configuration(wkhtmltopdf='C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe')
+#pdfkit.from_string(output_text, 'receipt.pdf', configuration=config)
 
-# Transactions detail, optional
-doc.add_transaction(Transaction('Paypal', 111, datetime.now(), 1))
-doc.add_transaction(Transaction('Stripe', 222, date.today(), 2))
 
-# Optional
-doc.set_bottom_tip("Email: example@example.com<br />Don't hesitate to contact us for any questions.")
-
-doc.finish()
